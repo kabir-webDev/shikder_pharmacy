@@ -22,6 +22,7 @@ var provider = new firebase.auth.GoogleAuthProvider();
 export default function MatModal() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [openSignIn, setOpenSignIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -49,7 +50,7 @@ export default function MatModal() {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
-        authUser.user.updateProfile({
+        return authUser.user.updateProfile({
           displayName: username,
         });
       })
@@ -58,6 +59,14 @@ export default function MatModal() {
     setUsername("");
     setEmail("");
     setPassword("");
+  };
+
+  const signIN = (e) => {
+    e.preventDefault();
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .catch((error) => alert(error.message));
+    setOpenSignIn(false);
   };
 
   //   const LogUser = () => {
@@ -72,7 +81,7 @@ export default function MatModal() {
       <Modal open={open} onClose={() => setOpen(false)}>
         <div className={classes.paper}>
           <form className="app__signup">
-            <h2>I am a Modal</h2>
+            <h2>Sign UP PoPuP</h2>
             <Input
               type="text"
               placeholder="username"
@@ -102,9 +111,62 @@ export default function MatModal() {
           </form>
         </div>
       </Modal>
-      <Button onClick={() => setOpen(true)} variant="contained" color="primary">
-        Sign UP
-      </Button>
+
+      <Modal open={openSignIn} onClose={() => setOpenSignIn(false)}>
+        <div className={classes.paper}>
+          <form className="app__signup">
+            <h2>SignInPoPuP</h2>
+
+            <Input
+              type="email"
+              placeholder="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              type="submit"
+              onClick={signIN}
+              variant="outlined"
+              color="primary"
+            >
+              Sign IN
+            </Button>
+          </form>
+        </div>
+      </Modal>
+
+      {user ? (
+        <Button
+          onClick={() => auth.signOut()}
+          variant="contained"
+          color="secondary"
+        >
+          LogOut
+        </Button>
+      ) : (
+        <div className="app__loginContainer">
+          <Button
+            onClick={() => setOpenSignIn(true)}
+            variant="contained"
+            color="primary"
+          >
+            Sign IN
+          </Button>
+          <Button
+            onClick={() => setOpen(true)}
+            variant="contained"
+            color="primary"
+          >
+            Sign UP
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
