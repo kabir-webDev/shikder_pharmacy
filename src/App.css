@@ -5,3 +5,10 @@
   color: rebeccapurple;
   height: 500px;
 }
+.App {
+  text-align: center;
+}
+.app__signup {
+  display: flex;
+  flex-direction: column;
+}
